@@ -9,9 +9,16 @@ function GetMap()
         
     });
 
+    //Add an infobox to the map so that we can display it when a shape is clicked.
+    infobox = new Microsoft.Maps.Infobox(map.getCenter(), { visible: false });
+    infobox.setMap(map);
+
+    //Create a layer.
+    var layer = new Microsoft.Maps.Layer();
+
     var locs = [];
 
-    for (var i = 0;i < data.features.length; i++) {
+    for (var i = 0;i < data.features.length-1; i++) {
         if (data.features[i].geometry != null) {
             var cd = data.features[i].geometry.coordinates[0];
             var exteriorRing = [];
@@ -24,23 +31,49 @@ function GetMap()
 
             //Create a polygon
             var polygon = new Microsoft.Maps.Polygon(exteriorRing, {
-                //fillColor: 'rgba(0, 255, 0, 0.5)',
+                fillColor: 'rgba(0, 0, 0, 0.5)',
                 strokeColor: 'red',
-                strokeThickness: 2
+                strokeThickness: 1
             });
 
+            layer.add(polygon);
+            
             //Add the polygon to map
-            map.entities.push(polygon);
-
-            /*
-            Microsoft.Maps.Events.addHandler(polygon, 'click', function(e) {
-                document.getElementById('output').innerHTML += ',' + i;
-
-                setTimeout(function () { document.getElementById('output').innerHTML = null; }, 1000);
-            });
-            */  
+            //map.entities.push(polygon[i]);
         }
     }
+
+    map.layers.insert(layer)
+
+    //Add right click mouse event to the layer.
+    Microsoft.Maps.Events.addHandler(layer, 'mouseover', function (e) {
+        //Get the shape that the user right clicked on in the layer.
+        var shape = e.primitive;
+        var locs = shape.getLocations();
+
+        document.getElementById('output').innerHTML = shape.getLocations();
+
+        shape.setOptions({
+            fillColor: 'rgba(0, 255, 0, 0.5)',
+            strokeColor: 'blue',
+            strokeThickness: 1
+        })
+    });
+
+    //Add right click mouse event to the layer.
+    Microsoft.Maps.Events.addHandler(layer, 'mouseout', function (e) {
+        //Get the shape that the user right clicked on in the layer.
+        var shape = e.primitive;
+        var locs = shape.getLocations();
+
+        document.getElementById('output').innerHTML = '';
+
+        shape.setOptions({
+            fillColor: 'rgba(0, 0, 0, 0.5)',
+            strokeColor: 'red',
+            strokeThickness: 1
+        })
+    });
 
     var rect = Microsoft.Maps.LocationRect.fromLocations(locs);
 
