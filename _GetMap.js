@@ -17,41 +17,61 @@ function GetMap()
     var layer = new Microsoft.Maps.Layer();
 
     var locs = [];
-
-    for (var i = 0;i < data.features.length-1; i++) {
-        if (data.features[i].geometry != null) {
-            var cd = data.features[i].geometry.coordinates[0];
-            var exteriorRing = [];
-                
-            for (var j = 0;j < cd.length; j++) {
-                exteriorRing.push(new Microsoft.Maps.Location(cd[j][1],cd[j][0]));
-            }
-
-            locs = locs.concat(exteriorRing);
-
-            //Create a polygon
-            var polygon = new Microsoft.Maps.Polygon(exteriorRing, {
-                fillColor: 'rgba(0, 0, 0, 0.5)',
-                strokeColor: 'red',
-                strokeThickness: 1
-            });
-
-            layer.add(polygon);
+    
+    for (var i = 0;i < data.length; i++) {
+        var cd = data[i];
+        var exteriorRing = [];
             
-            //Add the polygon to map
-            //map.entities.push(polygon[i]);
+        for (var j = 0;j < cd.length; j++) {
+            exteriorRing.push(new Microsoft.Maps.Location(cd[j][1],cd[j][0]));
         }
-    }
 
+        locs = locs.concat(exteriorRing);
+
+        //Create a polygon
+        var polygon = new Microsoft.Maps.Polygon(exteriorRing, {
+            fillColor: 'rgba(0, 0, 0, 0.5)',
+            strokeColor: 'red',
+            strokeThickness: 1
+        });
+
+        layer.add(polygon);
+        
+        //Add the polygon to map
+        //map.entities.push(polygon[i]);
+    }
+    
+    /*
+    locs = locs.concat(data[0])
+
+    for (var i = 0;i < data[0].length; i++) {
+        var cd = data[0][i];
+
+        var pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(cd[0], cd[1]), {
+            text: i
+        });
+
+
+        layer.add(pin);
+        
+        //Add the polygon to map
+        //map.entities.push(polygon[i]);
+    }
+    */
     map.layers.insert(layer)
 
+
     //Add right click mouse event to the layer.
-    Microsoft.Maps.Events.addHandler(layer, 'mouseover', function (e) {
+    Microsoft.Maps.Events.addHandler(layer, 'click', function (e) {
         //Get the shape that the user right clicked on in the layer.
         var shape = e.primitive;
         var locs = shape.getLocations();
 
-        document.getElementById('output').innerHTML = shape.getLocations();
+        var output = new Array()
+        for (var i = 0;i < locs.length; i++)
+            output[i] = '[' + locs[i].latitude + ', ' + locs[i].longitude + ']'
+        document.getElementById('output').innerHTML += '[' + output.join() + '], ';
+        //locs[cntUnion++] = shape.getLocations();
 
         shape.setOptions({
             fillColor: 'rgba(0, 255, 0, 0.5)',
@@ -61,7 +81,7 @@ function GetMap()
     });
 
     //Add right click mouse event to the layer.
-    Microsoft.Maps.Events.addHandler(layer, 'mouseout', function (e) {
+    Microsoft.Maps.Events.addHandler(layer, 'dblclick', function (e) {
         //Get the shape that the user right clicked on in the layer.
         var shape = e.primitive;
         var locs = shape.getLocations();
@@ -82,5 +102,5 @@ function GetMap()
         padding: 80 
 
     });
-    
+      
 }
