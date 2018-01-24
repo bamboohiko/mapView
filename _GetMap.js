@@ -1,3 +1,6 @@
+var unionList = new Array();
+var unionCnt = 0;
+
 function GetMap()
 {
     var map = new Microsoft.Maps.Map('#myMap', {
@@ -6,7 +9,6 @@ function GetMap()
         center: new Microsoft.Maps.Location(13.495191631943101, 100.41977246667943),
         mapTypeId: Microsoft.Maps.MapTypeId.aerial,
         zoom: 10
-        
     });
 
     //Add an infobox to the map so that we can display it when a shape is clicked.
@@ -41,14 +43,15 @@ function GetMap()
         //map.entities.push(polygon[i]);
     }
     
+    
+    //locs = locs.concat(data[0])
     /*
-    locs = locs.concat(data[0])
-
     for (var i = 0;i < data[0].length; i++) {
         var cd = data[0][i];
 
-        var pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(cd[0], cd[1]), {
-            text: i
+        var pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(cd[1], cd[0]), {
+            title: String(i),
+            text: String(i)
         });
 
 
@@ -67,10 +70,19 @@ function GetMap()
         var shape = e.primitive;
         var locs = shape.getLocations();
 
+        
         var output = new Array()
+        
+        //for (var i = 0;i < locs.length; i++)
+        //    output[i] = '[' + locs[i].longitude + ', ' + locs[i].latitude + ']'
+        //document.getElementById('output').innerHTML += '[' + output.join() + '], '
+        
         for (var i = 0;i < locs.length; i++)
-            output[i] = '[' + locs[i].latitude + ', ' + locs[i].longitude + ']'
-        document.getElementById('output').innerHTML += '[' + output.join() + '], ';
+            output[i] = new Array(locs[i].longitude,locs[i].latitude);
+        unionList[unionCnt] = output;
+        unionCnt += 1;
+        document.getElementById('output').innerHTML = unionList[unionCnt-1].length; 
+        
         //locs[cntUnion++] = shape.getLocations();
 
         shape.setOptions({

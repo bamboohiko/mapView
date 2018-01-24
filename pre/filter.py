@@ -2,22 +2,46 @@ import os
 import json
 import math
 
+EPS = 1e-13
+
+def distance(pa,pb):
+	dx = pa[0] - pb[0]
+	dy = pa[1] - pb[1]
+	return math.sqrt(dx*dx+dy*dy)
+
 def areaRule(poly):
 
-	Threshold = -5
+	Threshold = -8
 
 	area = 0
 	l = len(poly)
 	for i in range(0,l-1):
 		area += poly[i][0]*poly[i+1][1] - poly[i+1][0]*poly[i][1]
 
-	area = abs(area*0.5) + 1e-13
+	area = abs(area*0.5) + EPS
 
 
-	return math.floor(math.log10(area)) >= Threshold
+	return math.floor(math.log10(area)) + EPS >= Threshold
 
 def shapeRule(poly):
-	return True
+	global cnt
+
+	Threshold = -3
+
+	area = 0
+	l = len(poly)
+	for i in range(0,l-1):
+		area += poly[i][0]*poly[i+1][1] - poly[i+1][0]*poly[i][1]
+
+	area = abs(area*0.5) + EPS
+
+	diag = 0
+
+	for pa in poly:
+		for pb in poly:
+			diag = max(diag,distance(pa,pb))
+
+	return math.floor(math.log10(area/diag)) + EPS >= Threshold
 
 
 
@@ -26,16 +50,19 @@ with open('data.json','r') as f:
 
 data = json.loads(jsonData)
 newData = []
-#cnt = dict()
+
+cnt = dict()
 
 for poly in data:
 	if areaRule(poly) and shapeRule(poly):
 		newData.append(poly)
+	
 	'''
 	ar = areaRule(poly)
-	newData.append(ar)
+	sr = shapeRule(poly)
+
 	try:
-		cla = math.floor(math.log10(ar))
+		cla = math.floor(math.log10(sr))
 	except Exception as e:
 		print(poly,ar)
 	else:

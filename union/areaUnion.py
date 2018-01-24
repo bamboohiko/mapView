@@ -25,39 +25,77 @@ def areaFig(poly):
 
 	return area
 
-def areaUnionFor2(lista,listb):
-	la = len(lista)
-	lb = len(listb)
+def areaUnionFor2(polya,polyb):
+
+	EPS = 1e-13
+
+	polya = polya[:-1]
+	polyb = polyb[:-1]
+
+	la = len(polya)
+	lb = len(polyb)
+
+	psta = 0
+	maxDis = distance(polya[0],polyb[0])
+	for i in range(0,la):
+		for j in range(0,lb):
+			disab = distance(polya[i],polyb[j])
+			if (disab > maxDis):
+				maxDis = disab
+				psta = i
+	polya = polya[psta:] + polya[:psta]
+
 	listDis = []
 	for i in range(0,la):
 		for j in range(0,lb):
-			listDis.append([i,j,distance(lista[i],listb[j])])
-
-	lista += lista[0:-1]
-	listb += listb[0:-1]
-
+			listDis.append([i,j,distance(polya[i],polyb[j])])
 	listDis.sort(key= lambda x:(x[2],x[0],x[1]))
-	x1 = listDis[0][0]
-	y1 = listDis[0][1]
+
+	lista = polya
+	listb = 2*polyb
+
+	stand = listDis[0][2] + EPS
+	phi = 2.0
+
+	kend = len(listDis)
 	
-	x2 = listDis[2][0]
-	y2 = listDis[2][1]
+	for k in range(0,len(listDis)):
+		if listDis[k][2] >= phi*stand:
+			kend = k
+			break
+	print(kend)	
+	listDis = [pp[0:2] for pp in listDis]
 
+	p = [listDis[0],listDis[1]]
+	mp = (listDis[1][0]-listDis[0][0]) + (listDis[0][1]-listDis[1][1]+lb)%lb
+	for i in range(0,kend):
+		for j in range(i+1,kend):
+			c1,c2 = listDis[i],listDis[j]
+			if c1[0] > c2[0]:
+				c1,c2 = [c2,c1]
+			#print(c1,c2)
+			if (c2[0] - c1[0]) + (c1[1] - c2[1]+lb)%lb > mp:
+				mp = (c2[0] - c1[0]) + (c1[1] - c2[1]+lb)%lb
+				p = [c1,c2]
+	
+	x1,y1 = p[0]
+	x2,y2 = p[1]
 	if (y2 > y1):
-		poly1 = [lista[x1]] + listb[y1:y2] + lista[x2:x1+la]
-		poly2 = lista[x1:x2] + listb[y2:y1+lb] + [lista[x1]]
+		poly = lista[:x1+1] + listb[y1:y2+1] + lista[x2:] + [lista[0]]
 	else:
-		poly1 = lista[x1] + listb[y1:y2+lb] + lista[x2:x1+la]
-		poly2 = lista[x1:x2] + listb[y2:y1] + lista[x1]
-
-	if areaFig(poly1) > areaFig(poly2):
-		return poly1
-	else:
-		return poly2
+		poly = lista[:x1+1] + listb[y1:y2+lb+1] + lista[x2:] + [lista[0]]
+	return poly
 
 with open('data.json', 'r') as f:
 	jsonData = f.read()
 
 data = json.loads(jsonData)
 
-print(areaUnionFor2(data[0],data[1]))
+unionPoly = data[0]
+
+for i in range(1,len(data)):
+	unionPoly = areaUnionFor2(data[i],unionPoly)
+	print(len(unionPoly))
+
+#print((areaUnionFor2(data[2],data[0]))) 
+print(unionPoly)
