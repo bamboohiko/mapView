@@ -11,7 +11,7 @@ def distance(pa,pb):
 
 def areaRule(poly):
 
-	Threshold = -8
+	Threshold = -9
 
 	area = 0
 	l = len(poly)
@@ -21,12 +21,12 @@ def areaRule(poly):
 	area = abs(area*0.5) + EPS
 
 
-	return math.floor(math.log10(area)) + EPS >= Threshold
+	return math.log10(area) + EPS >= Threshold
 
 def shapeRule(poly):
 	global cnt
 
-	Threshold = -3
+	Threshold = -3.25
 
 	area = 0
 	l = len(poly)
@@ -41,7 +41,7 @@ def shapeRule(poly):
 		for pb in poly:
 			diag = max(diag,distance(pa,pb))
 
-	return math.floor(math.log10(area/diag)) + EPS >= Threshold
+	return math.log10(area/diag) + EPS >= Threshold
 
 
 

@@ -93,8 +93,8 @@ data = json.loads(jsonData)
 
 unionPoly = data[0]
 
-for i in range(1,len(data)):
-	unionPoly = areaUnionFor2(data[i],unionPoly)
+for i in range(1,3):
+	unionPoly = areaUnionFor2(unionPoly,data[i])
 	print(len(unionPoly))
 
 #print((areaUnionFor2(data[2],data[0]))) 
