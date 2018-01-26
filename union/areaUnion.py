@@ -1,5 +1,5 @@
 import os
-import json
+import geojson
 import math
 
 def distance(pa,pb):
@@ -27,7 +27,7 @@ def areaFig(poly):
 
 def areaUnionFor2(polya,polyb):
 
-	EPS = 1e-13
+	EPS = 1e-4
 
 	polya = polya[:-1]
 	polyb = polyb[:-1]
@@ -63,18 +63,20 @@ def areaUnionFor2(polya,polyb):
 		if listDis[k][2] >= phi*stand:
 			kend = k
 			break
-	print(kend)	
+
 	listDis = [pp[0:2] for pp in listDis]
 
 	p = [listDis[0],listDis[1]]
-	mp = (listDis[1][0]-listDis[0][0]) + (listDis[0][1]-listDis[1][1]+lb)%lb
+	if (p[0][0] < p[1][0]):
+		p[0],p[1] = [p[1],p[0]]
+	mp = 0
 	for i in range(0,kend):
 		for j in range(i+1,kend):
 			c1,c2 = listDis[i],listDis[j]
 			if c1[0] > c2[0]:
 				c1,c2 = [c2,c1]
 			#print(c1,c2)
-			if (c2[0] - c1[0]) + (c1[1] - c2[1]+lb)%lb > mp:
+			if ((c2[0] - c1[0]) + (c1[1] - c2[1]+lb)%lb > mp) and ((c1[1] - c2[1]+lb)%lb < (c2[1] - c1[1]+lb)%lb):
 				mp = (c2[0] - c1[0]) + (c1[1] - c2[1]+lb)%lb
 				p = [c1,c2]
 	
@@ -86,16 +88,28 @@ def areaUnionFor2(polya,polyb):
 		poly = lista[:x1+1] + listb[y1:y2+lb+1] + lista[x2:] + [lista[0]]
 	return poly
 
-with open('data.json', 'r') as f:
+with open('data.js', 'r') as f:
 	jsonData = f.read()
 
-data = json.loads(jsonData)
+splitData = jsonData.split('|')
 
+#print(splitData[0])	
+unionData = geojson.loads(splitData[0])
+otherData = geojson.loads(splitData[1])
+
+
+print(len(unionData.features),len(otherData.features))
+
+data = unionData.features
 unionPoly = data[0]
 
-for i in range(1,3):
-	unionPoly = areaUnionFor2(unionPoly,data[i])
-	print(len(unionPoly))
+for i in range(1,len(data)):
+	unionPoly.geometry.coordinates[0] = areaUnionFor2(unionPoly.geometry.coordinates[0],data[i].geometry.coordinates[0])
+	
+otherData.features.append(unionPoly)
+print(len(otherData.features))
 
-#print((areaUnionFor2(data[2],data[0]))) 
-print(unionPoly)
+with open('newData.js','w') as f:
+	f.write('var data = ' + geojson.dumps(otherData))
+
+

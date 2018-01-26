@@ -1,6 +1,7 @@
 import os
-import json
+import geojson
 import math
+import copy
 
 EPS = 1e-13
 
@@ -24,8 +25,6 @@ def areaRule(poly):
 	return math.log10(area) + EPS >= Threshold
 
 def shapeRule(poly):
-	global cnt
-
 	Threshold = -3.25
 
 	area = 0
@@ -45,18 +44,21 @@ def shapeRule(poly):
 
 
 
-with open('data.json','r') as f:
+with open('th2.json','r') as f:
 	jsonData = f.read()
 
-data = json.loads(jsonData)
-newData = []
+data = geojson.loads(jsonData)
+newData = copy.deepcopy(data) 
+newData.features = []
 
-cnt = dict()
+cnt = 0
 
-for poly in data:
-	if areaRule(poly) and shapeRule(poly):
-		newData.append(poly)
-	
+for polygon in data.features:
+	if polygon.geometry is None:
+		continue
+	locs = polygon.geometry.coordinates[0]
+	if areaRule(locs) and shapeRule(locs):
+		newData.features.append(polygon)
 	'''
 	ar = areaRule(poly)
 	sr = shapeRule(poly)
@@ -73,7 +75,5 @@ for poly in data:
 	'''
 
 #print(str(cnt.items()))
-with open('usedData.json','w') as f:
-	f.write(str(newData))
-
-print(len(newData))
+with open('data.js','w') as f:
+	f.write('var data = ' + geojson.dumps(newData))
