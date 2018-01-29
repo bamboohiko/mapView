@@ -63,45 +63,65 @@ function GetMap() {
 
     //Create an infobox that will render in the center of the map.
     var infobox = new Microsoft.Maps.Infobox(new Microsoft.Maps.Location(13.395191631943101, 100.51977246667943), {
-        title: 'Map Center',
-        description: 'Seattle',
+        //title: 'Union Options',
+        //description: 'Seattle',
         showPointer: false, 
         showCloseButton: false,
         actions: [{
-            label: 'output',
+            label: 'union',
             eventHandler: function () {
                 var shapes1 = unionLayer.getPrimitives();
+                /*
                 var shapes2 = layer.getPrimitives();
-
                 var geoJson = JSON.stringify(Microsoft.Maps.GeoJson.write(shapes1)) + '|'
                             + JSON.stringify(Microsoft.Maps.GeoJson.write(shapes2));
-                /*
+
                 var myWindow = window.open('', '_blank', 'scrollbars=yes, resizable=yes, width=400, height=100');
                 myWindow.document.write(geoJson);
                 myWindow.document.close();
-                */
 
                 var blob = new Bolb([geoJson], {type: "text/plain;charset=utf-8"});
                 saveAs(blob,'unionData.js');
-                
-                
+                */
+
+                var newShapes1 = Microsoft.Maps.GeoJson.read(areaUnion(Microsoft.Maps.GeoJson.write(shapes1)), {
+                    polygonOptions: {
+                        fillColor: 'rgba(0,255,0,0.5)',
+                        strokeColor: 'blue',
+                        strokeThickness: 1
+                    }
+                });
+
+
+                unionLayer.clear();
+                layer.add(newShapes1);
             }
         }, {
             label: 'clear',
             eventHandler: function () {
-                var shapes = unionLayer.getPrimitives();
+                unionLayer.clear();
+                layer.clear();
 
-                for (var x in shapes) {
-                    shapes[x].setOptions({
-                        fillColor: 'rgba(0, 0, 0, 0.5)',
+                var shape = Microsoft.Maps.GeoJson.read(data, {
+                    polygonOptions: {
+                        fillColor: 'rgba(0,0,0,0.5)',
                         strokeColor: 'red',
-                        strokeThickness: 1
-                    })
+                        strokeThickness: 0.5
+                    }
+                });
 
-                }
+                layer.add(shape);                
+            }
+        }, {
+            label: 'output',
+            eventHandler: function () {
+                var shapes = layer.getPrimitives();
+                
+                var geoJson = JSON.stringify(Microsoft.Maps.GeoJson.write(shapes));
 
-                unionLayer.remove(shape)
-                layer.add(shape)
+                var myWindow = window.open('', '_blank', 'scrollbars=yes, resizable=yes, width=400, height=100');
+                myWindow.document.write(geoJson);
+                myWindow.document.close();
             }
         }]
     });

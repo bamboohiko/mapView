@@ -11,7 +11,7 @@ function distance(pa,pb) {
 }
 
 function areaUnionFor2(polya,polyb) {
-	document.getElementById('output').innerHTML += polya.length + ' '+ polyb.length + ',';
+	//document.getElementById('output').innerHTML += polya.length + ' '+ polyb.length + ',';
 
 	var EPS = 1e-4;
 
@@ -57,10 +57,8 @@ function areaUnionFor2(polya,polyb) {
 		}
 	
 	var listPoint = new Array();
-	//document.getElementById('output').innerHTML = kend;
 	for (var i = 0;i < kend; i++) {
 		listPoint[i] = new Array(listDis[i][0],listDis[i][1]);
-		//document.getElementById('output').innerHTML += '[' +  listPoint[i] + ']';
 	}
 
 	var p = new Array(listPoint[0],listPoint[1]);
@@ -93,34 +91,19 @@ function areaUnionFor2(polya,polyb) {
 	else
 		poly = lista.slice(0,x1+1).concat(listb.slice(y1,y2+lb+1),lista.slice(x2,la),new Array(lista[0]));
 	
-	document.getElementById('output').innerHTML += poly.length + '|';
+	//document.getElementById('output').innerHTML += poly.length + '|';
 	
 	
 	return poly;
 	//return polya;
 }
 
-function areaUnion() {
-	/*
-	var str = String(unionCnt);
-    for (var i = 0;i < unionCnt;i++) {
-        str += '[' + '[' + unionList[i][0][0] + ', ' + unionList[i][0][1] + ']'
-        for (var j = 1;j < unionList[i].length; j++)
-            str += ', [' + unionList[i][j][0] + ', ' + unionList[i][j][1] + ']'
-        str += '],'
-    }
-    document.getElementById('output').innerHTML = str ;
-    unionCnt = 0;
-    */
-	var unionPoly = arrCopy(unionList[0])
-	for (var i = 1;i < unionCnt;i++)
-		unionPoly = areaUnionFor2(unionPoly,unionList[i]);
+function areaUnion(shapes) {;
+	var data = arrCopy(shapes.features);
+	var unionPoly = data[0];
+	for (var i = 1;i < data.length;i++)
+		unionPoly.geometry.coordinates[0] = areaUnionFor2(unionPoly.geometry.coordinates[0],data[i].geometry.coordinates[0])
 	
-	
-	var str = '[' + unionPoly[0][0] + ', ' + unionPoly[0][1] + ']';
-	for (var i = 1;i < unionPoly.length; i++)
-		str += ', [' + unionPoly[i][0] + ', ' + unionPoly[i][1] + ']'
-	document.getElementById('output').innerHTML = '[' + str + ']';
-	
+	return unionPoly;
 }
 
