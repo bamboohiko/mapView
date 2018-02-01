@@ -17,10 +17,10 @@ for feature in data.features:
 		for polygon in feature.geometry.coordinates[0]:
 			x = [i for i,j in polygon]
 			y = [j for i,j in polygon]
-	lines = plt.plot(x,y,'k',linewidth=0.2)
+	lines = plt.plot(x,y,'k',linewidth=0.1 )
 
 
 #plt.axis([0, 6, 0, 20])
-plt.savefig('test.png',dpi = 512)
+plt.savefig('test.png',dpi = 1024)
 #plt.show()
 
