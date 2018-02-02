@@ -19,8 +19,13 @@ for feature in data.features:
 			y = [j for i,j in polygon]
 	lines = plt.plot(x,y,'k',linewidth=0.1 )
 
+xmin,xmax = plt.xlim()
+ymin,ymax = plt.ylim()
+with open('scope.txt','w') as f:
+	f.write(str([xmin,xmax,ymin,ymax]))
 
-#plt.axis([0, 6, 0, 20])
+plt.xticks([])
+plt.yticks([])
 plt.savefig('test.png',dpi = 1024)
-#plt.show()
+
 

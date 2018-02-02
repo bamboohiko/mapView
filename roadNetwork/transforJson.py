@@ -13,8 +13,9 @@ kancore = geojson.FeatureCollection([geojson.Feature(geometry = cursor.fetchone(
 cursor.execute('''
 	select st_asgeojson(st_transform(way,4326))::jsonb as geometry 
 	from public.thailand 
-	where admin_level = '' and waterway = '' and
-	 (st_covers(\'''' + area + '''\',st_transform(way,4326))
+	where admin_level = '' and waterway = '' and 
+	highway not like '%_link' and highway <> 'tertiary' 
+	and (st_covers(\'''' + area + '''\',st_transform(way,4326))
 	or st_crosses(\'''' + area + '''\',st_transform(way,4326)));
 	''')
 #	where highway <> \'\' 
