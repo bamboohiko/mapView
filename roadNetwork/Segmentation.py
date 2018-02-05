@@ -13,7 +13,7 @@ def pixel2coord(x,y):
 	return [nx,ny]
 
 
-img = cv2.imread('test.png',0)
+img = cv2.imread('test_water.png',0)
 ret, thresh = cv2.threshold(img,127,255,cv2.THRESH_BINARY_INV)
 image, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 

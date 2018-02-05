@@ -26,6 +26,6 @@ with open('scope.txt','w') as f:
 
 plt.xticks([])
 plt.yticks([])
-plt.savefig('test.png',dpi = 1024)
+plt.savefig('test_highway5_rail_river_canal_stream.png',dpi = 1024)
 
 
