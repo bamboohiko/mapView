@@ -1,0 +1,28 @@
+数据一共分为5类
+
+1.boundary
+	区域边界
+	与admin_level没有对应关系，且无行政区域名称，建议用GDAM数据代替
+
+2.highway
+	公路
+	按级别分为motorway,trunk,primary,secondary,tertiary以及对应的link道路
+
+
+3.waterway
+	河道
+	分布较广，由于河道的特征，导致其形状破碎，对正常分割有很大干扰
+	分为canal,river,stream
+
+4.railway
+	铁道
+	rail
+	以bangkok为中心的放射性国家级路网
+	对路网分割意义不大，建议不使用
+
+5.barrier
+	障碍物
+	分布较为密集，线段短小，意义不明
+	从数据上看对分割完全没有意义，建议不使用
+
+"way"
